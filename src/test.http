@@ -1,0 +1,19 @@
+### 1. 회원가입 성공 테스트 (정상적인 데이터)
+POST http://localhost:8080/api/members
+Content-Type: application/json
+
+{
+  "email": "test@naver.com",
+  "password": "password1234",
+  "nickname": "개발왕"
+}
+
+### 2. 회원가입 실패 테스트 (이메일 형식 X, 비밀번호 짧음)
+POST http://localhost:8080/api/members
+Content-Type: application/json
+
+{
+  "email": "이건이메일이아니야",
+  "password": "123",
+  "nickname": "김"
+}
