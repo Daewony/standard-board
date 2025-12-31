@@ -17,3 +17,21 @@ Content-Type: application/json
   "password": "123",
   "nickname": "김"
 }
+
+### 3. 로그인 성공 테스트 (DB에 있는 진짜 아이디/비번)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "test@naver.com",
+  "password": "password1234"
+}
+
+### 4. 로그인 실패 테스트 (비밀번호 틀림)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "test@naver.com",
+  "password": "wrongPassword"
+}
