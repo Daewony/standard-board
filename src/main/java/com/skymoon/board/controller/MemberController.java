@@ -70,5 +70,14 @@ public class MemberController {
         return "로그인 성공! (세션 ID: " + session.getId() + ")";
     }
 
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        // 세션을 가져와서 (없으면 null 반환)
+        HttpSession session = request.getSession();
+        if (session != null) {
+            session.invalidate(); // 세션 날려버리기 (사물함 비우기)
+        }
 
+        return "로그아웃 성공!";
+    }
 }
