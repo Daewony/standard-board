@@ -16,3 +16,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // "닉네임이 이미 있는지 확인하기" (중복 가입 방지용)
     boolean existsByEmail(String email);
 }
+
