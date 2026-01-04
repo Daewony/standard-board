@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -55,5 +58,38 @@ public class PostController {
         return "제목: " + post.getTitle() +
                 "\n내용: " + post.getContent() +
                 "\n작성자: " + authorName;
+    }
+
+    // 게시글 전제 조회 (V1: 성능 최적화 안 된 버전)
+    @GetMapping("/v1/posts")
+    public List<String> getAllPostsV1() {
+        // 1. 모든 글을 가져오기
+        List<Post> posts = postRepository.findAll();
+
+        List<String> results = new ArrayList<>();
+
+        for (Post post : posts) {
+            // 2. 여기서 문제가 터집니다! (N+1 문제 발생)
+            // 작성자(Member)는 LAZY 로딩이라 프록시(가짜) 상태인데,
+            // .getNickname()을 하는 순간 DB에 "작성자 이름 가져와!" 하고 쿼리를 또 날립니다.
+            // 글이 10개면 여기서 쿼리가 10번 더 나갑니다.
+            results.add("제목: " + post.getTitle() + ", 작성자: " + post.getMember().getNickname());
+        }
+
+        return results;
+    }
+
+    // 게시글 전체 조회 (V2: Fetch Join 적용!)
+    @GetMapping("/v2/posts")
+    public List<String> getAllPostsV2() {
+        List<Post> posts = postRepository.findAllWithMember();
+
+        List<String> results = new ArrayList<>();
+
+        for (Post post : posts) {
+            results.add("제목: " + post.getTitle() + ", 작성자: " + post.getMember().getNickname());
+        }
+
+        return results;
     }
 }
