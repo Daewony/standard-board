@@ -44,4 +44,44 @@ public class PostService {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
     }
+
+    /**
+     * 게시글 수정
+     */
+    @Transactional
+    public void updatePost(Long postId, String title, String content, Member loginMember) {
+        // 조회
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+
+        // 검증
+        validateAuthor(post, loginMember);
+
+        // 값 변경
+        post.update(title, content);
+    }
+
+    /**
+     * 게시글 삭제
+     */
+    @Transactional
+    public void deletePost(Long postId, Member loginMember) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+
+        validateAuthor(post, loginMember);
+
+        postRepository.delete(post);
+    }
+
+    // 🔒 작성자 검증 내부 메서드 (중복 제거)
+    private void validateAuthor(Post post, Member loginMember) {
+        Long postAuthorId = post.getMember().getId();
+        Long loginMemberId = loginMember.getId();
+
+        // ID가 다르면 예외 발생!
+        if (!postAuthorId.equals(loginMemberId)) {
+            throw new IllegalStateException("작성자만 수정/삭제할 수 있습니다.");
+        }
+    }
 }

@@ -44,4 +44,9 @@ public class Post extends BaseEntity {
         this.viewCount = 0L;
         this.status = PostStatus.ACTIVE;
     }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

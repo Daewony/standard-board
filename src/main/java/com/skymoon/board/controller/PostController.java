@@ -4,6 +4,7 @@ import com.skymoon.board.PostForm;
 import com.skymoon.board.domain.Member;
 import com.skymoon.board.domain.Post;
 import com.skymoon.board.repository.PostRepository;
+import com.skymoon.board.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class PostController {
     private final PostRepository postRepository;
+    private final PostService postService;
 
     @PostMapping("/posts")
     public String createPost(@RequestBody PostForm form, HttpServletRequest request) {
@@ -91,5 +93,46 @@ public class PostController {
         }
 
         return results;
+    }
+
+    // 게시글 수정
+    @PutMapping("/posts/{id}")
+    public String updatePost(@PathVariable Long id, @RequestBody PostForm form, HttpServletRequest request) {
+        // 로그인 체크
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginMember") == null) {
+            return "오류: 로그인이 필요합니다.";
+        }
+
+        // 2. 로그인 멤버 꺼내기
+        Member loginMember = (Member) session.getAttribute("loginMember");
+
+        // 3. 서비스 호출 (ID와 변경할 내용, 그리고 **누구인지** 같이 전달)
+        try {
+            postService.updatePost(id, form.getTitle(), form.getContent(), loginMember);
+        } catch (IllegalStateException e) {
+            return "오류: " + e.getMessage(); // "작성자만 수정... 입니다" 메시지 반환
+        }
+
+        return "게시글 수정 완료!";
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/posts/{id}")
+    public String deletePost(@PathVariable Long id, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginMember") == null) {
+            return "오류: 로그인이 필요합니다.";
+        }
+
+        Member loginMember = (Member) session.getAttribute("loginMember");
+
+        try {
+            postService.deletePost(id, loginMember);
+        } catch (IllegalStateException e) {
+            return "오류: " + e.getMessage();
+        }
+        
+        return "게시글 삭제 완료!";
     }
 }
