@@ -101,18 +101,14 @@ public class PostController {
         // 로그인 체크
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loginMember") == null) {
-            return "오류: 로그인이 필요합니다.";
+            throw new IllegalStateException("로그인이 필요합니다.");
         }
 
         // 2. 로그인 멤버 꺼내기
         Member loginMember = (Member) session.getAttribute("loginMember");
 
-        // 3. 서비스 호출 (ID와 변경할 내용, 그리고 **누구인지** 같이 전달)
-        try {
-            postService.updatePost(id, form.getTitle(), form.getContent(), loginMember);
-        } catch (IllegalStateException e) {
-            return "오류: " + e.getMessage(); // "작성자만 수정... 입니다" 메시지 반환
-        }
+        // 3. 서비스 호출 (ID와 변경할 내용, 그리고 누구인지 같이 전달)
+        postService.updatePost(id, form.getTitle(), form.getContent(), loginMember);
 
         return "게시글 수정 완료!";
     }
@@ -122,17 +118,13 @@ public class PostController {
     public String deletePost(@PathVariable Long id, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loginMember") == null) {
-            return "오류: 로그인이 필요합니다.";
+            throw new IllegalStateException("로그인이 필요합니다.");
         }
 
         Member loginMember = (Member) session.getAttribute("loginMember");
 
-        try {
-            postService.deletePost(id, loginMember);
-        } catch (IllegalStateException e) {
-            return "오류: " + e.getMessage();
-        }
-        
+        postService.deletePost(id, loginMember);
+
         return "게시글 삭제 완료!";
     }
 }
