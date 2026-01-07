@@ -1,4 +1,4 @@
-package com.skymoon.board;
+package com.skymoon.board.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

@@ -1,8 +1,8 @@
 package com.skymoon.board.controller;
 
-import com.skymoon.board.PostForm;
 import com.skymoon.board.domain.Member;
 import com.skymoon.board.domain.Post;
+import com.skymoon.board.dto.PostForm;
 import com.skymoon.board.repository.PostRepository;
 import com.skymoon.board.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;

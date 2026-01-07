@@ -40,6 +40,22 @@ Content-Type: application/json
 ### 4. (확인) 진짜 바뀌었나 조회
 GET http://localhost:8080/api/posts/1
 
+### 2. 댓글 작성 테스트 (1번 게시글에 댓글 달기)
+POST http://localhost:8080/api/posts/1/comments
+Content-Type: application/json
+
+{
+  "content": "이 글 정말 유익하네요! 👍"
+}
+
+### 3. 댓글 하나 더 달기 (같은 게시글에)
+POST http://localhost:8080/api/posts/1/comments
+Content-Type: application/json
+
+{
+  "content": "질문이 있습니다!"
+}
+
 
 ### -----------------------------------------
 ### 여기서부터 보안 테스트 (해커 등장!) 😈

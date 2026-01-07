@@ -1,7 +1,7 @@
 package com.skymoon.board.controller;
 
-import com.skymoon.board.LoginForm;
 import com.skymoon.board.domain.Member;
+import com.skymoon.board.dto.LoginForm;
 import com.skymoon.board.dto.MemberSaveRequestDto;
 import com.skymoon.board.repository.MemberRepository;
 import com.skymoon.board.service.MemberService;
