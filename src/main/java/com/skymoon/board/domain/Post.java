@@ -25,10 +25,6 @@ public class Post extends BaseEntity {
 
     private Long viewCount;
 
-    // 논리적 삭제를 위한 상태값 (ACTIVE, DELETED)
-    @Enumerated(EnumType.STRING)
-    private PostStatus status;
-
     // N:1 관계 설정 (가장 중요!)
     // FetchType.LAZY : 필요할 때만 멤버 정보를 가져온다 (성능 최적화 필수 질문
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,7 +38,6 @@ public class Post extends BaseEntity {
         this.content = content;
         this.member = member;
         this.viewCount = 0L;
-        this.status = PostStatus.ACTIVE;
     }
 
     public void update(String title, String content) {

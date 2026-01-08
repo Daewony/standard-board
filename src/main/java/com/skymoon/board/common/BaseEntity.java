@@ -1,8 +1,6 @@
 package com.skymoon.board.common;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,4 +19,27 @@ public class BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+
+    // 핵심: @Setter를 붙이지 않습니다! (외부에서 setStatus() 호출 금지)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EntityStatus status = EntityStatus.ACTIVE;
+
+    public void activate() {
+        this.status = EntityStatus.ACTIVE;
+    }
+
+    public boolean isActive() {
+        return this.status == EntityStatus.ACTIVE;
+    }
+
+    public void delete() {
+        this.status = EntityStatus.DELETED;
+    }
+
+    public boolean isDeleted() {
+        return this.status == EntityStatus.DELETED;
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.skymoon.board.dto;
+package com.skymoon.board.dto.request;
 
 import com.skymoon.board.domain.Member;
 import jakarta.validation.constraints.Email;

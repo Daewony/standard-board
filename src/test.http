@@ -56,6 +56,23 @@ Content-Type: application/json
   "content": "질문이 있습니다!"
 }
 
+### 댓글 조회
+GET http://localhost:8080/api/posts/1/comments
+
+### 댓글 파라미터 조회
+GET http://localhost:8080/api/posts/1/comments?page=0&size=1
+
+### 댓글 수정
+PUT http://localhost:8080/api/comments/1
+Content-Type: application/json
+
+{
+  "content": "질문 수정합니다!!"
+}
+
+### 댓글 삭제
+DELETE http://localhost:8080/api/comments/1
+
 
 ### -----------------------------------------
 ### 여기서부터 보안 테스트 (해커 등장!) 😈
