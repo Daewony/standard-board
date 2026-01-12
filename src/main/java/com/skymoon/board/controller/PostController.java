@@ -3,11 +3,16 @@ package com.skymoon.board.controller;
 import com.skymoon.board.domain.Member;
 import com.skymoon.board.domain.Post;
 import com.skymoon.board.dto.PostForm;
+import com.skymoon.board.dto.response.PostResponse;
 import com.skymoon.board.repository.PostRepository;
 import com.skymoon.board.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -126,5 +131,14 @@ public class PostController {
         postService.deletePost(id, loginMember);
 
         return "게시글 삭제 완료!";
+    }
+
+    // 게시글 목록 조회 API
+    @GetMapping("/posts")
+    public Page<PostResponse> getList(
+            @RequestParam(required = false) String keyword,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return postService.getPostList(keyword, pageable);
     }
 }

@@ -27,6 +27,44 @@ Content-Type: application/json
   "title": "내 소중한 일기",
   "content": "아무도 건드리지 마세요."
 }
+### 1. 회원가입 성공 테스트 (정상적인 데이터)
+POST http://localhost:8080/api/members
+Content-Type: application/json
+
+{
+  "email": "test@naver.com",
+  "password": "password1234",
+  "nickname": "개발왕"
+}
+
+
+### 1. (준비) 메인 계정 로그인 (test@naver.com)
+
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "test@naver.com",
+  "password": "password1234"
+}
+
+### 2. (준비) 글 작성 (글 ID를 잘 기억하세요! 예: 1번)
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "내 소중한 일기",
+  "content": "아무도 건드리지 마세요."
+}
+
+###
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "질문",
+  "content": "아무도 건드리지 마세요."
+}
 
 ### 3. [성공 테스트] 본인이 수정 시도 (제목을 '수정완료'로 변경)
 PUT http://localhost:8080/api/posts/1
@@ -36,6 +74,183 @@ Content-Type: application/json
   "title": "수정완료",
   "content": "내가 쓴 글이니까 수정됨!"
 }
+
+###
+GET http://localhost:8080/api/posts?keyword=질문
+
+### 4. (확인) 진짜 바뀌었나 조회
+GET http://localhost:8080/api/posts/1
+
+### 2. 댓글 작성 테스트 (1번 게시글에 댓글 달기)
+POST http://localhost:8080/api/posts/1/comments
+Content-Type: application/json
+
+{
+  "content": "이 글 정말 유익하네요! 👍"
+}
+
+### 3. 댓글 하나 더 달기 (같은 게시글에)
+POST http://localhost:8080/api/posts/1/comments
+Content-Type: application/json
+
+{
+  "content": "질문이 있습니다!"
+}
+
+### 댓글 조회
+GET http://localhost:8080/api/posts/1/comments
+
+### 댓글 파라미터 조회
+GET http://localhost:8080/api/posts/1/comments?page=0&size=1
+
+### 댓글 수정
+PUT http://localhost:8080/api/comments/1
+Content-Type: application/json
+
+{
+  "content": "질문 수정합니다!!"
+}
+
+### 댓글 삭제
+DELETE http://localhost:8080/api/comments/1
+
+
+### -----------------------------------------
+### 여기서부터 보안 테스트 (해커 등장!) 😈
+### -----------------------------------------
+
+### 5. 해커 회원가입
+POST http://localhost:8080/api/members
+Content-Type: application/json
+
+{
+  "email": "hacker@google.com",
+  "password": "hacker1234",
+  "nickname": "해커"
+}
+
+### 6. 해커 로그인 (세션이 해커로 바뀜)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "hacker@google.com",
+  "password": "hacker1234"
+}
+
+### 7. [실패 테스트] 해커가 아까 그 글(1번) 수정 시도
+PUT http://localhost:8080/api/posts/1
+Content-Type: application/json
+
+{
+  "title": "해킹했다!!!",
+  "content": "메롱메롱"
+}
+
+### 8. [실패 테스트] 해커가 아까 그 글(1번) 삭제 시도
+DELETE http://localhost:8080/api/posts/1
+
+
+
+
+#### 2. 회원가입 실패 테스트 (이메일 형식 X, 비밀번호 짧음)
+#POST http://localhost:8080/api/members
+#Content-Type: application/json
+#
+#{
+#  "email": "이건이메일이아니야",
+#  "password": "123",
+#  "nickname": "김"
+#}
+#
+#### 3. 로그인 성공 테스트 (DB에 있는 진짜 아이디/비번)
+#POST http://localhost:8080/api/login
+#Content-Type: application/json
+#
+#{
+#  "email": "test@naver.com",
+#  "password": "password1234"
+#}
+#
+#### 4. 로그인 실패 테스트 (비밀번호 틀림)
+#POST http://localhost:8080/api/login
+#Content-Type: application/json
+#
+#{
+#  "email": "test@naver.com",
+#  "password": "wrongPassword"
+#}
+#
+#### 5. 로그아웃 테스트 (세션 삭제)
+#POST http://localhost:8080/api/logout
+#
+#
+#### 2. 글쓰기 요청 (로그인 상태 유지됨)
+#POST http://localhost:8080/api/posts
+#Content-Type: application/json
+#
+#{
+#  "title": "2026년 첫 게시글",
+#  "content": "JPA와 세션 정복 완료! 이제 나는 백엔드 개발자다."
+#}
+#
+#### 3. 게시글 조회 (작성자 확인)
+#GET http://localhost:8080/api/posts/1
+#
+#### 글쓰기 (반복해서 3~4번 실행)
+#POST http://localhost:8080/api/posts
+#Content-Type: application/json
+#
+#{
+#  "title": "test1",
+#  "content": "test1"
+#}
+#
+#### 글쓰기 (반복해서 3~4번 실행)
+#POST http://localhost:8080/api/posts
+#Content-Type: application/json
+#
+#{
+#  "title": "test2",
+#  "content": "test2"
+#}
+#
+#### 글쓰기 (반복해서 3~4번 실행)
+#POST http://localhost:8080/api/posts
+#Content-Type: application/json
+#
+#{
+#  "title": "test3",
+#  "content": "test3"
+#}
+#
+#### 4. (V1) 게시글 전체 조회 (N+1 문제 발생시키기)
+#GET http://localhost:8080/api/v1/posts
+#
+#### 4. (V2) 게시글 전체 조회 (N+1 문제 발생시키기)
+#GET http://localhost:8080/api/v2/posts
+
+
+###
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+
+{
+  "title": "질문",
+  "content": "아무도 건드리지 마세요."
+}
+
+### 3. [성공 테스트] 본인이 수정 시도 (제목을 '수정완료'로 변경)
+PUT http://localhost:8080/api/posts/1
+Content-Type: application/json
+
+{
+  "title": "수정완료",
+  "content": "내가 쓴 글이니까 수정됨!"
+}
+
+###
+GET http://localhost:8080/api/posts?keyword=질문
 
 ### 4. (확인) 진짜 바뀌었나 조회
 GET http://localhost:8080/api/posts/1

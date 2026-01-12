@@ -2,11 +2,15 @@ package com.skymoon.board.service;
 
 import com.skymoon.board.domain.Member;
 import com.skymoon.board.domain.Post;
+import com.skymoon.board.dto.response.PostResponse;
 import com.skymoon.board.repository.MemberRepository;
 import com.skymoon.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +78,9 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    // 🔒 작성자 검증 내부 메서드 (중복 제거)
+    /**
+     * 🔒 작성자 검증 내부 메서드 (중복 제거)
+     */
     private void validateAuthor(Post post, Member loginMember) {
         Long postAuthorId = post.getMember().getId();
         Long loginMemberId = loginMember.getId();
@@ -83,5 +89,21 @@ public class PostService {
         if (!postAuthorId.equals(loginMemberId)) {
             throw new IllegalStateException("작성자만 수정/삭제할 수 있습니다.");
         }
+    }
+
+    /**
+     * 게시글 목록 조회 (검색 + 페이징)
+     */
+    @Transactional(readOnly = true)
+    public Page<PostResponse> getPostList(String keyword, Pageable pageable) {
+        Page<Post> posts;
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            posts = postRepository.findAll(pageable);
+        } else {
+            posts = postRepository.findByTitleContaining(keyword, pageable);
+        }
+
+        return posts.map(PostResponse::new);
     }
 }
