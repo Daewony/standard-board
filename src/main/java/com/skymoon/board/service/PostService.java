@@ -101,7 +101,7 @@ public class PostService {
         if (keyword == null || keyword.trim().isEmpty()) {
             posts = postRepository.findAll(pageable);
         } else {
-            posts = postRepository.findByTitleContaining(keyword, pageable);
+            posts = postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         }
 
         return posts.map(PostResponse::new);
