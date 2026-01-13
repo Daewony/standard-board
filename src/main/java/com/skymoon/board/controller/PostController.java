@@ -52,19 +52,17 @@ public class PostController {
     }
 
     // 게시글 단건 조회 (작성자 닉네임 포함)
-    @GetMapping("/posts/{id}")
-    public String getPost(@PathVariable Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+    @GetMapping("/posts/{postId}")
+    public PostResponse getPost(@PathVariable Long postId) {
+//        Post post = postRepository.findById(postId)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+//
+//        // ✨ 여기서 지연 로딩(LAZY)이 발동합니다!
+//        // post.getMember() 하는 순간에는 프록시(가짜)였다가,
+//        // .getNickname() 하는 순간 DB 조회 쿼리가 나갑니다.
+//        String authorName = post.getMember().getNickname();
 
-        // ✨ 여기서 지연 로딩(LAZY)이 발동합니다!
-        // post.getMember() 하는 순간에는 프록시(가짜)였다가,
-        // .getNickname() 하는 순간 DB 조회 쿼리가 나갑니다.
-        String authorName = post.getMember().getNickname();
-
-        return "제목: " + post.getTitle() +
-                "\n내용: " + post.getContent() +
-                "\n작성자: " + authorName;
+        return postService.getPost(postId);
     }
 
     // 게시글 전제 조회 (V1: 성능 최적화 안 된 버전)
@@ -101,8 +99,8 @@ public class PostController {
     }
 
     // 게시글 수정
-    @PutMapping("/posts/{id}")
-    public String updatePost(@PathVariable Long id, @RequestBody PostForm form, HttpServletRequest request) {
+    @PutMapping("/posts/{postId}")
+    public String updatePost(@PathVariable Long postId, @RequestBody PostForm form, HttpServletRequest request) {
         // 로그인 체크
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loginMember") == null) {
@@ -113,14 +111,14 @@ public class PostController {
         Member loginMember = (Member) session.getAttribute("loginMember");
 
         // 3. 서비스 호출 (ID와 변경할 내용, 그리고 누구인지 같이 전달)
-        postService.updatePost(id, form.getTitle(), form.getContent(), loginMember);
+        postService.updatePost(postId, form.getTitle(), form.getContent(), loginMember);
 
         return "게시글 수정 완료!";
     }
 
     // 게시글 삭제
-    @DeleteMapping("/posts/{id}")
-    public String deletePost(@PathVariable Long id, HttpServletRequest request) {
+    @DeleteMapping("/posts/{postId}")
+    public String deletePost(@PathVariable Long postId, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loginMember") == null) {
             throw new IllegalStateException("로그인이 필요합니다.");
@@ -128,7 +126,7 @@ public class PostController {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
 
-        postService.deletePost(id, loginMember);
+        postService.deletePost(postId, loginMember);
 
         return "게시글 삭제 완료!";
     }

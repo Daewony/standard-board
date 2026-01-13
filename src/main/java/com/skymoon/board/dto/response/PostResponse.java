@@ -12,6 +12,7 @@ public class PostResponse {
     private String content;
     private String writer;      // 작성자 닉네임
     private Long viewCount;     // 조회수
+    private Integer likeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -27,6 +28,7 @@ public class PostResponse {
         }
 
         this.viewCount = post.getViewCount();
+        this.likeCount = post.getLikeCount();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
     }

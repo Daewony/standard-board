@@ -44,9 +44,16 @@ public class PostService {
     /**
      * 게시글 단건 조회
      */
-    public Post getPost(Long postId) {
-        return postRepository.findById(postId)
+    public PostResponse getPost(Long postId) {
+        // 1. 조회
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        // 2. 조회수 증가 (비즈니스 로직) - (혹시 Post 엔티티에 메서드 없으면 만드셔야 합니다!)
+        // post.increaseViewCount();
+
+        // 3. 변환 (Entity -> DTO)
+        return new PostResponse(post);
     }
 
     /**

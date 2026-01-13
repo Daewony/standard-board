@@ -25,6 +25,10 @@ public class Post extends BaseEntity {
 
     private Long viewCount;
 
+    @Column(nullable = false)
+    private Integer likeCount = 0;
+
+
     // N:1 관계 설정 (가장 중요!)
     // FetchType.LAZY : 필요할 때만 멤버 정보를 가져온다 (성능 최적화 필수 질문
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,5 +47,15 @@ public class Post extends BaseEntity {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void addLike() {
+        this.likeCount++;
+    }
+
+    public void removeLike() {
+        if (this.likeCount > 0) {
+            this.likeCount--;
+        }
     }
 }
