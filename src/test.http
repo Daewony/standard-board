@@ -99,13 +99,13 @@ GET http://localhost:8080/api/posts/1/comments
 ### 5. [보안 테스트] - 해커 시나리오
 ### ==================================================================================
 
-### 5-1. 해커 회원가입
+### 5-1. 해커 회원가입 [실패]
 POST http://localhost:8080/api/members
 Content-Type: application/json
 
 {
-  "email": "hacker@google.com",
-  "password": "hacker1234",
+  "email": "hacker",
+  "password": "1",
   "nickname": "해커"
 }
 
@@ -139,3 +139,14 @@ POST http://localhost:8080/api/posts/1/hearts
 
 ### 5. (확인) 1번 게시글 다시 조회 (좋아요 수: 1 -> 0 감소했는지?)
 GET http://localhost:8080/api/posts/1
+
+### [실패 테스트] 제목 없는 게시글 작성 (검증 로직 작동 확인)
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+# 로그인 후 발급받은 세션 쿠키가 필요합니다.
+# (로그인을 먼저 하고, 쿠키가 자동으로 적용되거나 직접 넣어야 함)
+
+{
+  "title": "",
+  "content": "제목이 없어서 혼나야 함"
+}

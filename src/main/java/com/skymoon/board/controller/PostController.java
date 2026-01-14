@@ -8,6 +8,7 @@ import com.skymoon.board.repository.PostRepository;
 import com.skymoon.board.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")
-    public String createPost(@RequestBody PostForm form, HttpServletRequest request) {
+    public String createPost(@RequestBody @Valid PostForm form, HttpServletRequest request) {
         // 1. 세션 가져오기 (없으면 null)
         HttpSession session = request.getSession(false);
 
@@ -100,7 +101,7 @@ public class PostController {
 
     // 게시글 수정
     @PutMapping("/posts/{postId}")
-    public String updatePost(@PathVariable Long postId, @RequestBody PostForm form, HttpServletRequest request) {
+    public String updatePost(@PathVariable Long postId, @RequestBody @Valid PostForm form, HttpServletRequest request) {
         // 로그인 체크
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loginMember") == null) {
