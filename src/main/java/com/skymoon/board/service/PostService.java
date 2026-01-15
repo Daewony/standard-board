@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -112,5 +114,21 @@ public class PostService {
         }
 
         return posts.map(PostResponse::new);
+    }
+
+    /**
+     * [학습용] 전체 조회 V1 (N+1 문제 발생용)
+     */
+    @Transactional(readOnly = true)
+    public List<Post> findAllV1() {
+        return postRepository.findAll();
+    }
+
+    /**
+     * [학습용] 전체 조회 V2 (Fetch Join 최적화용)
+     */
+    @Transactional(readOnly = true)
+    public List<Post> findAllV2() {
+        return postRepository.findAllWithMember();
     }
 }
