@@ -2,6 +2,7 @@ package com.skymoon.board.service;
 
 import com.skymoon.board.domain.Member;
 import com.skymoon.board.domain.Post;
+import com.skymoon.board.dto.response.PostResponse;
 import com.skymoon.board.repository.MemberRepository;
 import com.skymoon.board.repository.PostRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +64,7 @@ class PostServiceTest {
         Long postId = postService.writePost(member.getId(), "읽기 전용", "내용");
 
         // 2. When (실행: 조회 서비스 호출)
-        Post findPost = postService.getPost(postId);
+        PostResponse findPost = postService.getPost(postId);
 
         // 3. Then (검증)
         assertThat(findPost.getTitle()).isEqualTo("읽기 전용");
