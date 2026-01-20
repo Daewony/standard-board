@@ -1,64 +1,93 @@
-# 📌 Standard Board Service (기본에 충실한 게시판)
+# 📌 Standard Board Service (基本に忠実な掲示板)
 
-## 1. 프로젝트 개요
-- **목적:** Java/Spring Boot의 핵심 기술을 활용하여, **유지보수성과 확장성**을 고려한 백엔드 시스템 구축
-- **핵심 가치:**
-  - **안정성 (Stability):** 예외 처리 및 데이터 무결성 보장
-  - **가독성 (Readability):** 일본 실무 표준에 맞춘 패키지 구조 및 코드 컨벤션 준수
-  - **객체지향 (OOP):** JPA를 활용한 도메인 주도 설계
+## 1. プロジェクト概要 (Project Overview)
 
-## 2. 기술 스택 (Tech Stack)
+- **目的:** Java/Spring Bootのコア技術を活用し、**保守性と拡張性**を考慮したバックエンドシステムを構築
+- **コアバリュー (Core Values):**
+    - **安定性 (Stability):** 例外処理およびデータの整合性を保証
+    - **可読性 (Readability):** 日本の実務標準に合わせたパッケージ構成およびコード規約の遵守
+    - **オブジェクト指向 (OOP):** JPAを活用したドメイン駆動設計 (DDD)
+
+## 2. 技術スタック (Tech Stack)
+
 - **Language:** Java 17
 - **Framework:** Spring Boot 3.5.9
-- **Database:** H2 (Develop) / MySQL (Production - 예정)
+- **Database:** H2 (Develop) / MySQL (Production - 予定)
 - **ORM:** Spring Data JPA
 - **Template Engine:** Thymeleaf
 - **Tool:** IntelliJ IDEA, Gradle, Git
 
 ---
 
-## 3. 기능 명세 (Functional Specifications)
+## 3. 機能仕様 (Functional Specifications)
 
-### 👤 회원 (Member)
-1. **회원가입:** 이메일(ID), 비밀번호, 닉네임 입력 (유효성 검사 포함)
-2. **로그인/로그아웃:** Session 기반의 인증 시스템
-3. **회원 정보 수정:** 본인만 수정 가능
+### 👤 会員 (Member)
 
-### 📝 게시글 (Post)
-1. **게시글 작성:** 로그인한 회원만 작성 가능
-2. **게시글 조회:** 페이징(Paging) 처리된 목록 조회 및 상세 조회
-3. **게시글 수정/삭제:** 작성자 본인만 가능
-    - **특이사항:** 데이터 보존을 위해 **'논리적 삭제 (Logical Deletion)'** 적용
+1. **会員登録:** メールアドレス(ID)、パスワード、ニックネーム入力 (バリデーションチェック含む)
+2. **ログイン/ログアウト:** セッション(Session)ベースの認証システム
+3. **会員情報の修正:** 本人のみ修正可能
+
+### 📝 投稿 (Post)
+
+1. **投稿作成:** ログインした会員のみ作成可能
+2. **投稿照会:** ページネーション(Paging)処理された一覧照会および詳細照会
+3. **投稿修正/削除:** 作成者本人のみ可能
+    - **特記事項:** データの保存のため、**「論理削除 (Logical Deletion)」**を適用
 
 ---
 
-## 4. DB 설계 (ERD)
+## 4. DB設計 (ERD)
 
-### 🏗 설계 의도 (Design Concept)
-- **BaseEntity 활용:** 생성일시(`created_at`), 수정일시(`updated_at`)를 공통으로 관리하여 중복 코드 제거
-- **논리적 삭제 (Soft Delete):** `status` 컬럼을 두어 실수로 삭제된 데이터를 복구할 수 있도록 안전 장치 마련
+### 🏗 設計意図 (Design Concept)
 
-### 📊 테이블 구조
+- **BaseEntityの活用:** 作成日時(`created_at`)、修正日時(`updated_at`)を共通管理し、重複コードを削除
+- **論理削除 (Soft Delete):** `status`カラムを設け、誤って削除されたデータを復旧できるよう安全装置を用意
+- **データの整合性:** 参照整合性(FK)および`NOT NULL`制約を厳格に適用
 
-#### [Member Table] - 사용자
-| Column Name | Type | Key | Description |
-|---|---|---|---|
-| member_id | Long | PK | 회원 고유 ID (Auto Increment) |
-| email | Varchar | UK | 로그인 ID (이메일 형식) |
-| password | Varchar | | 암호화된 비밀번호 |
-| nickname | Varchar | | 사용자 닉네임 |
-| role | Varchar | | 권한 (USER, ADMIN) |
-| created_at | DateTime | | 가입 일시 |
-| updated_at | DateTime | | 정보 수정 일시 |
+### 📊 テーブル構造
 
-#### [Post Table] - 게시글
-| Column Name | Type | Key | Description |
-|---|---|---|---|
-| post_id | Long | PK | 게시글 고유 ID |
-| title | Varchar | | 게시글 제목 |
-| content | Text | | 게시글 본문 (대용량) |
-| view_count | Long | | 조회수 |
-| status | Varchar | | 상태 (ACTIVE, DELETED) - **논리적 삭제용** |
-| member_id | Long | FK | 작성자 ID (N:1 관계) |
-| created_at | DateTime | | 작성 일시 |
-| updated_at | DateTime | | 수정 일시 |
+![ERD Diagram](./doc/erd.png)
+
+#### [Member Table] - 会員 (Member)
+
+| Column Name | Type     | Key | Description             |
+|-------------|----------|-----|-------------------------|
+| member_id   | Long     | PK  | 会員固有ID (Auto Increment) |
+| email       | Varchar  | UK  | ログインID (メール形式)          |
+| password    | Varchar  |     | 暗号化されたパスワード             |
+| nickname    | Varchar  |     | ニックネーム                  |
+| created_at  | DateTime |     | 加入日時                    |
+| updated_at  | DateTime |     | 情報修正日時                  |
+
+#### [Post Table] - 投稿 (Post)
+
+| Column Name | Type     | Key | Description                      |
+|-------------|----------|-----|----------------------------------|
+| post_id     | Long     | PK  | 投稿固有ID                           |
+| title       | Varchar  |     | タイトル                             |
+| content     | Text     |     | 本文 (大容量)                         |
+| view_count  | Long     |     | 閲覧数 (Default 0)                  |
+| like_count  | Integer  |     | いいね数 (Default 0)                 |
+| status      | Varchar  |     | 状態 (ACTIVE, DELETED) - **論理削除用** |
+| member_id   | Long     | FK  | 作成者ID (Member.id)                |
+| created_at  | DateTime |     | 作成日時                             |
+| updated_at  | DateTime |     | 修正日時                             |
+
+#### [Comment Table] - コメント (Comment)
+
+| Column Name | Type     | Key | Description       |
+|-------------|----------|-----|-------------------|
+| comment_id  | Long     | PK  | コメント固有ID          |
+| content     | Text     |     | コメント本文            |
+| member_id   | Long     | FK  | 作成者ID (Member.id) |
+| post_id     | Long     | FK  | 投稿ID (Post.id)    |
+| created_at  | DateTime |     | 作成日時              |
+| updated_at  | DateTime |     | 修正日時              |
+
+#### [Likes Table] - いいね (Likes)
+
+| Column Name | Type | Key | Description       |
+|-------------|------|-----|-------------------|
+| likes_id    | Long | PK  | いいね固有ID           |
+| member_id   | Long | FK  | 作成者ID (Member.id) |
+| post_id     | Long | FK  | 投稿ID (Post.id)    |
