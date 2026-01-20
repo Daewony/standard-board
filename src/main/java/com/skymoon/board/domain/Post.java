@@ -23,6 +23,7 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private Long viewCount;
 
     @Column(nullable = false)
