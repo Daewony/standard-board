@@ -19,6 +19,34 @@
 
 ---
 
+## 🏗️ システムアーキテクチャ (System Architecture)
+
+AWS EC2(Linux)環境にデプロイされ、H2 Databaseを使用してデータを管理する構造です。
+
+```mermaid
+graph LR
+    subgraph Client_Layer ["Client Layer"]
+        User([User]) -- HTTP Request : 8080 --> Internet((Internet))
+    end
+
+    subgraph AWS_Cloud ["AWS Cloud (EC2)"]
+        direction TB
+        Internet -- Inbound Rule --> FW[Firewall]
+        FW --> SB[Spring Boot Application]
+        
+        subgraph Internal ["Internal System"]
+            SB -- JPA/Hibernate --> H2[(H2 Database)]
+            SB -- Logging --> Console[Log Console]
+        end
+    end
+
+    style SB fill:#6DB33F,stroke:#333,color:white
+    style H2 fill:#336791,stroke:#333,color:white
+    style AWS_Cloud fill:#FF9900,color:white,fill-opacity:0.2
+```
+
+---
+
 ## 3. 機能仕様 (Functional Specifications)
 
 ### 👤 会員 (Member)
