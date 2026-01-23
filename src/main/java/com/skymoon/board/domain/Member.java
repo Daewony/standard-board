@@ -18,7 +18,6 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long id;
 
-
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -33,5 +32,12 @@ public class Member extends BaseEntity {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+    }
+
+    /**
+     * 비밀번호 변경 (암호화된 비밀번호 주입용)
+     */
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 }
